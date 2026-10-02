@@ -12,74 +12,130 @@ export default function AudioPlayer() {
     // Set standard ceremonial volume
     audio.volume = 0.75
 
-    // Function to start playback
-    const startAudio = () => {
+    // Helper to safely unlock Web Audio API on iOS / WebKit
+    const unlockWebAudio = () => {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext
+        if (AudioCtx) {
+          const ctx = new AudioCtx()
+          if (ctx.state === 'suspended') {
+            ctx.resume().then(() => ctx.close()).catch(() => {})
+          } else {
+            ctx.close().catch(() => {})
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Function to unmute and ensure sound is actively playing
+    const enableSoundAndPlay = () => {
+      if (!audio) return
+      unlockWebAudio()
+      audio.muted = false
+      audio.volume = 0.75
+
       const playPromise = audio.play()
       if (playPromise !== undefined) {
         playPromise
           .then(() => {
             setIsPlaying(true)
-          })
-          .catch(() => {
-            // Browser autoplay policy blocked unmuted sound; gesture listener will handle it
-            setIsPlaying(false)
-          })
-      }
-    }
-
-    // Try playing immediately
-    startAudio()
-
-    // Global listener on document and window with capture to ensure any touch/tap starts audio
-    const handleGesture = () => {
-      if (audio && audio.paused) {
-        audio
-          .play()
-          .then(() => {
-            setIsPlaying(true)
             removeGestureListeners()
           })
-          .catch(() => {})
+          .catch(() => {
+            // Still waiting on eligible user gesture
+          })
       }
     }
 
-    const events = ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown']
+    // Attempt 1: Try unmuted autoplay directly
+    audio.muted = false
+    const directPlayPromise = audio.play()
+    if (directPlayPromise !== undefined) {
+      directPlayPromise
+        .then(() => {
+          setIsPlaying(true)
+        })
+        .catch(() => {
+          // Attempt 2: Autoplay with sound blocked by browser policy.
+          // Start playing MUTED so media stream is buffered and playing immediately:
+          audio.muted = true
+          audio
+            .play()
+            .then(() => {
+              // Playing in background muted, ready to instantly unmute on first gesture
+            })
+            .catch(() => {})
+        })
+    }
+
+    // Global gesture listener: unmutes as soon as user touches, scrolls, or clicks anything
+    const handleGesture = () => {
+      enableSoundAndPlay()
+    }
+
+    const events = [
+      'pointerdown',
+      'touchstart',
+      'touchend',
+      'click',
+      'scroll',
+      'wheel',
+      'keydown',
+    ]
 
     const addGestureListeners = () => {
       events.forEach((evt) => {
-        document.addEventListener(evt, handleGesture, { capture: true, once: true, passive: true })
-        window.addEventListener(evt, handleGesture, { capture: true, once: true, passive: true })
+        window.addEventListener(evt, handleGesture, { capture: true, passive: true })
+        document.addEventListener(evt, handleGesture, { capture: true, passive: true })
       })
     }
 
     const removeGestureListeners = () => {
       events.forEach((evt) => {
-        document.removeEventListener(evt, handleGesture, { capture: true })
         window.removeEventListener(evt, handleGesture, { capture: true })
+        document.removeEventListener(evt, handleGesture, { capture: true })
       })
     }
 
     addGestureListeners()
 
-    const onPlay = () => setIsPlaying(true)
+    const onPlay = () => {
+      if (!audio.muted) setIsPlaying(true)
+    }
     const onPause = () => setIsPlaying(false)
+    const onVolumeChange = () => {
+      if (audio.muted || audio.volume === 0) {
+        setIsPlaying(false)
+      } else if (!audio.paused) {
+        setIsPlaying(true)
+      }
+    }
 
     audio.addEventListener('play', onPlay)
     audio.addEventListener('pause', onPause)
+    audio.addEventListener('volumechange', onVolumeChange)
 
     return () => {
       removeGestureListeners()
       audio.removeEventListener('play', onPlay)
       audio.removeEventListener('pause', onPause)
+      audio.removeEventListener('volumechange', onVolumeChange)
     }
   }, [])
 
   const togglePlay = (e) => {
-    if (e) e.stopPropagation()
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
     const audio = audioRef.current
     if (!audio) return
 
-    if (isPlaying) {
+    // Explicit user tap: always unmute and set volume
+    audio.muted = false
+    audio.volume = 0.75
+
+    if (isPlaying && !audio.paused) {
       audio.pause()
       setIsPlaying(false)
     } else {
@@ -94,16 +150,16 @@ export default function AudioPlayer() {
 
   return (
     <>
-      {/* Audio element with fallback sources */}
+      {/* Audio element with fallback sources: lightweight m4a first, then mp3 */}
       <audio
         ref={audioRef}
         loop
         preload="auto"
         playsInline
+        autoPlay
       >
-        <source src="/nasheed.mp3" type="audio/mpeg" />
         <source src="/nasheed.m4a" type="audio/mp4" />
-        <source src="/nasheed.mp4" type="audio/mp4" />
+        <source src="/nasheed.mp3" type="audio/mpeg" />
       </audio>
 
       {/* Floating ceremonial music controller at bottom-right */}
