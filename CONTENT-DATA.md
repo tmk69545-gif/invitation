@@ -35,9 +35,10 @@ This file is intended to be the editable content source for the invitation websi
 | Sunnat | Thu. 29th Oct. 2026 | 10:00 Am |
 
 ## Address / location text present in the source
-
+ 
 - Azad Mohalla, Vill.+Po.- Kara, P.S.- Obra
 - Dist.- Aurangabad (Bihar)
+- Google Maps: https://maps.app.goo.gl/xyC4g63YAyu6wbpNA?g_st=awb
 
 ## RSVP names shown in the source
 

@@ -9,10 +9,11 @@ import {
 } from '../layout'
 
 export default function VenueCard({ data }) {
-  const mapsQuery = encodeURIComponent(
-    `${data.address.join(', ')}, ${data.city}`
-  )
-  const mapsUrl = `https://maps.google.com/?q=${mapsQuery}`
+  const mapsUrl =
+    data.mapsUrl ||
+    `https://maps.google.com/?q=${encodeURIComponent(
+      `${data.address.join(', ')}, ${data.city}`
+    )}`
 
   return (
     <section
@@ -38,12 +39,16 @@ export default function VenueCard({ data }) {
 
           <ScrollReveal delay={200}>
             <div className="my-4 md:my-6">
-              <div
-                className="inline-flex items-center justify-center w-11 h-11 md:w-14 md:h-14 rounded-full border border-[var(--color-gold)]/60 mb-3 md:mb-5 shadow-xs"
+              <a
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open venue location in Google Maps"
+                className="inline-flex items-center justify-center w-11 h-11 md:w-14 md:h-14 rounded-full border border-[var(--color-gold)]/60 mb-3 md:mb-5 shadow-xs transition-transform duration-300 hover:scale-110 hover:border-[var(--color-gold)]"
                 style={{ background: 'rgba(196,160,90,0.08)' }}
               >
                 <MapPin size={18} className="text-[var(--color-gold-dark)] md:scale-110" />
-              </div>
+              </a>
 
               {data.address.map((line, i) => (
                 <p
@@ -64,9 +69,14 @@ export default function VenueCard({ data }) {
 
           <ScrollReveal delay={300}>
             <div className="my-4 md:my-6">
-              <PrimaryButton href={mapsUrl} className="gap-2 sm:gap-2.5 text-xs sm:text-sm px-6 sm:px-8 py-3 sm:py-3.5">
+              <PrimaryButton
+                href={mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="gap-2 sm:gap-2.5 text-xs sm:text-sm px-6 sm:px-8 py-3 sm:py-3.5"
+              >
                 <ExternalLink size={13} />
-                Open in Maps
+                Open in Google Maps
               </PrimaryButton>
             </div>
           </ScrollReveal>

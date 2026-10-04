@@ -65,19 +65,19 @@ export function ScriptAccent({ children, className = '' }) {
 /**
  * Primary CTA button with refined luxury typography
  */
-export function PrimaryButton({ children, href, onClick, className = '' }) {
+export function PrimaryButton({ children, href, onClick, className = '', target, rel, ...rest }) {
   const base =
     'font-cinzel inline-flex items-center justify-center gap-2.5 rounded-full border border-[var(--color-gold)] bg-[var(--color-emerald)] px-8 py-3.5 text-xs md:text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-white)] shadow-sm transition-all duration-300 hover:shadow-md hover:scale-[1.02] hover:-translate-y-0.5 hover:bg-[var(--color-emerald-deep)] focus-visible:outline-2 focus-visible:outline-[var(--color-gold)] focus-visible:outline-offset-4'
 
   if (href) {
     return (
-      <a href={href} className={`${base} ${className}`}>
+      <a href={href} target={target} rel={rel} className={`${base} ${className}`} {...rest}>
         {children}
       </a>
     )
   }
   return (
-    <button onClick={onClick} className={`${base} ${className}`}>
+    <button onClick={onClick} className={`${base} ${className}`} {...rest}>
       {children}
     </button>
   )
@@ -86,19 +86,19 @@ export function PrimaryButton({ children, href, onClick, className = '' }) {
 /**
  * Secondary ghost button with refined typography
  */
-export function SecondaryButton({ children, href, onClick, className = '' }) {
+export function SecondaryButton({ children, href, onClick, className = '', target, rel, ...rest }) {
   const base =
     'font-cinzel inline-flex items-center justify-center gap-2.5 rounded-full border border-[var(--color-ink)]/25 bg-transparent px-8 py-3.5 text-xs md:text-sm font-semibold uppercase tracking-[0.16em] text-[var(--color-ink)] transition-all duration-300 hover:border-[var(--color-gold)] hover:text-[var(--color-emerald)] hover:bg-[var(--color-gold)]/5 focus-visible:outline-2 focus-visible:outline-[var(--color-gold)] focus-visible:outline-offset-4'
 
   if (href) {
     return (
-      <a href={href} className={`${base} ${className}`}>
+      <a href={href} target={target} rel={rel} className={`${base} ${className}`} {...rest}>
         {children}
       </a>
     )
   }
   return (
-    <button onClick={onClick} className={`${base} ${className}`}>
+    <button onClick={onClick} className={`${base} ${className}`} {...rest}>
       {children}
     </button>
   )

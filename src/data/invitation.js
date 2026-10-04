@@ -17,15 +17,16 @@ export const invitation = {
   ],
 
   programme: [
-    { title: '1st Nikah',     date: 'Friday, 23 October 2026',  time: '09:00 PM' },
-    { title: '2nd Nikah',     date: 'Sunday, 25 October 2026',  time: '09:00 PM' },
-    { title: 'Dawate Walima', date: '',                          time: '10:00 PM' },
-    { title: 'Sunnat',        date: 'Thursday, 29 October 2026', time: '10:00 AM' },
+    { title: '1st Nikah', date: 'Friday, 23 October 2026', time: '09:00 PM' },
+    { title: '2nd Nikah', date: 'Sunday, 25 October 2026', time: '09:00 PM' },
+    { title: 'Dawate Walima', date: '', time: '10:00 PM' },
+    { title: 'Sunnat', date: 'Thursday, 29 October 2026', time: '10:00 AM' },
   ],
 
   host: 'Mrs. & Mr. Md. Junaid Alam',
-  address: ['Azad Mohalla, Vill.+Po.- Kara', 'P.S.- Obra, Dist.- Aurangabad (Bihar)'],
+  address: ['Vill.+Po.- Kara', 'P.S.- Obra, Dist.- Aurangabad (Bihar)'],
   city: 'Aurangabad (Bihar)',
+  mapsUrl: 'https://maps.app.goo.gl/xyC4g63YAyu6wbpNA?g_st=awb',
 
   rsvp: [
     'Suhail Akhter',
